@@ -39,7 +39,7 @@ if mapped_concepts:
 
 # Sidebar: White Paper and GitHub Links
 st.sidebar.markdown("---")
-st.sidebar.markdown("[📄 View Public White Paper](https://github.com/MMM777-ai/Ontology-Enhanced AI - Public White Paper.pdf)")
+st.sidebar.markdown("[📄 View Public White Paper](https://github.com/MMM777-ai/ontoguard/blob/main/assets/Ontology-Enhanced%20AI%20-%20Public%20White%20Paper.pdf)")
 st.sidebar.markdown("[🌐 GitHub Repository](https://github.com/MMM777-ai/web-ontology-demo)")
 
 # Prompt input (main column)
