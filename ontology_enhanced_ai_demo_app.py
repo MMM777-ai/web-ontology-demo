@@ -31,7 +31,7 @@ st.markdown("""
     [data-testid="stSidebarNav"] {
         display: none !important;
     }
-    .css-1v3fvcr {
+    [data-testid="stAppViewContainer"] {
         padding-top: 1rem !important;
     }
 }
