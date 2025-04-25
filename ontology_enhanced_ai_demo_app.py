@@ -21,12 +21,12 @@ st.set_page_config(page_title="OntoGuard-Inspired AI Demo", layout="wide")
 # Custom CSS for blue Request NDA button
 st.markdown("""
 <style>
-div.stButton > button[kind="primary"] {
+.stButton > button {
     background-color: #007bff !important;
     color: white !important;
     border: none !important;
 }
-div.stButton > button[kind="primary"]:hover {
+.stButton > button:hover {
     background-color: #0056b3 !important;
 }
 </style>
