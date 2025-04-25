@@ -17,6 +17,21 @@ except json.decoder.JSONDecodeError as e:
 
 # Page setup
 st.set_page_config(page_title="OntoGuard-Inspired AI Demo", layout="wide")
+
+# Custom CSS for blue Request NDA button
+st.markdown("""
+<style>
+div.stButton > button[kind="primary"] {
+    background-color: #007bff !important;
+    color: white !important;
+    border: none !important;
+}
+div.stButton > button[kind="primary"]:hover {
+    background-color: #0056b3 !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 st.title("🔍 OntoGuard-Inspired AI Demo")
 st.subheader("Governance Layer Beneath LLMs: Real-Time Compliance & Reliability")
 
@@ -26,13 +41,14 @@ is_mobile = screen_width <= 768 if isinstance(screen_width, (int, float)) else F
 
 # Prompt input logic
 if is_mobile:
-    # For mobile devices, place prompt input in the main content area
+    # For mobile devices, place prompt input and white paper link in the main content area
     st.markdown("### 💬 Submit a Prompt")
     user_prompt = st.text_input(
         "Enter a user prompt:",
         placeholder="e.g., Is our sentiment model GDPR compliant?",
         key="mobile_prompt"
     )
+    st.markdown("[📄 View Public White Paper](https://ontoguard.ai/assets/Ontology-Enhanced%20AI%20-%20Public%20White%20Paper.pdf)")
 else:
     # For larger screens, keep prompt input in the sidebar
     st.sidebar.markdown("### 🔍 Prompt-to-Ontology Mapping")
@@ -57,9 +73,10 @@ if not is_mobile and user_prompt:
         for concept in mapped_concepts:
             st.sidebar.markdown(f"- {concept}")
 
-# Sidebar: White Paper and GitHub Links (always in sidebar)
+# Sidebar: White Paper and GitHub Links
 st.sidebar.markdown("---")
-st.sidebar.markdown("[📄 View Public White Paper](https://github.com/MMM777-ai/ontoguard/blob/main/assets/Ontology-Enhanced%20AI%20-%20Public%20White%20Paper.pdf)")
+if not is_mobile:
+    st.sidebar.markdown("[📄 View Public White Paper](https://ontoguard.ai/assets/Ontology-Enhanced%20AI%20-%20Public%20White%20Paper.pdf)")
 st.sidebar.markdown("[🌐 GitHub Repository](https://github.com/MMM777-ai/web-ontology-demo)")
 
 # Main content: Prompt input description (only for non-mobile)
@@ -159,5 +176,5 @@ st.markdown("""
 
 _This redacted demo excludes proprietary drift detection, federated validation, and sub-second reasoning—unlock the full OntoGuard platform under NDA._
 """)
-if st.button("Request NDA Details"):
-    st.markdown("📧 Please contact [markstarobinsky@yourdomain.com](mailto:markstarobinsky@yourdomain.com) to initiate NDA discussions.")
+if st.button("Request NDA Details", key="nda_button"):
+    st.markdown("📧 Please contact [mark.starobinsky@ontoguard.ai](mailto:mark.starobinsky@ontoguard.ai) to initiate NDA discussions.")
