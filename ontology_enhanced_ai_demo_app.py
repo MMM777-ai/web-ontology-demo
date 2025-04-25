@@ -16,6 +16,28 @@ except json.decoder.JSONDecodeError as e:
 
 # Page setup
 st.set_page_config(page_title="OntoGuard-Inspired AI Demo", layout="wide")
+
+# Inject custom CSS to force sidebar visibility on mobile
+st.markdown("""
+<style>
+@media (max-width: 768px) {
+    [data-testid="stSidebar"] {
+        display: block !important;
+        width: 100% !important;
+        position: relative !important;
+        min-width: unset !important;
+        max-width: unset !important;
+    }
+    [data-testid="stSidebarNav"] {
+        display: none !important;
+    }
+    .css-1v3fvcr {
+        padding-top: 1rem !important;
+    }
+}
+</style>
+""", unsafe_allow_html=True)
+
 st.title("🔍 OntoGuard-Inspired AI Demo")
 st.subheader("Governance Layer Beneath LLMs: Real-Time Compliance & Reliability")
 
@@ -47,7 +69,6 @@ st.markdown("""
 ### 💬 Submit a Prompt
 _Type a question or statement your LLM might generate. This demo simulates evaluation for reliability, compliance, and reasoning beneath models like GPT-4, Claude, or Gemini._
 """)
-# Note: Using the same user_prompt from sidebar to avoid duplicate inputs
 if user_prompt:
     # Simulated dynamic reliability score (fake, IP-safe)
     keywords = ["compliant", "data", "model"]
@@ -83,7 +104,6 @@ if user_prompt:
     G = nx.DiGraph()
     for rel in ontology_data["relations"]:
         G.add_edge(rel["source"], rel["target"], label=rel["type"])
-    # Add demo-specific edges (still generic)
     G.add_edge("Prompt", "Data Input", label="processed by")
     G.add_edge("Data Input", "Sentiment Model", label="feeds")
     G.add_edge("Sentiment Model", "Compliance", label="evaluated by")
@@ -100,9 +120,7 @@ if user_prompt:
         "Transparency & Explainability": "purple",
         "Data Protection": "red"
     }
-    # Map concepts to clusters
     concept_to_cluster = {c["label"]: c["cluster"] for c in ontology_data["concepts"]}
-    # Assign colors to nodes, defaulting to lightblue for demo-specific nodes
     node_colors = [cluster_colors.get(concept_to_cluster.get(node, ""), "lightblue") for node in G.nodes()]
 
     pos = nx.spring_layout(G, seed=42)
