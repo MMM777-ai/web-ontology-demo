@@ -2,6 +2,7 @@ import streamlit as st
 import networkx as nx
 import matplotlib.pyplot as plt
 import json
+from streamlit_javascript import st_javascript
 
 # Load ontology data from file
 try:
@@ -16,37 +17,34 @@ except json.decoder.JSONDecodeError as e:
 
 # Page setup
 st.set_page_config(page_title="OntoGuard-Inspired AI Demo", layout="wide")
-
-# Inject custom CSS to force sidebar visibility on mobile
-st.markdown("""
-<style>
-@media (max-width: 768px) {
-    [data-testid="stSidebar"] {
-        display: block !important;
-        width: 100% !important;
-        position: relative !important;
-        min-width: unset !important;
-        max-width: unset !important;
-    }
-    [data-testid="stSidebarNav"] {
-        display: none !important;
-    }
-    [data-testid="stAppViewContainer"] {
-        padding-top: 1rem !important;
-    }
-}
-</style>
-""", unsafe_allow_html=True)
-
 st.title("🔍 OntoGuard-Inspired AI Demo")
 st.subheader("Governance Layer Beneath LLMs: Real-Time Compliance & Reliability")
 
-# Sidebar: Prompt-to-Ontology Mapping
-st.sidebar.markdown("### 🔍 Prompt-to-Ontology Mapping")
-user_prompt = st.sidebar.text_input("Enter a user prompt:", placeholder="e.g., Is our sentiment model GDPR compliant?")
+# Detect mobile device using screen width
+screen_width = st_javascript("window.innerWidth")
+is_mobile = screen_width <= 768 if isinstance(screen_width, (int, float)) else False
 
-mapped_concepts = []
-if user_prompt:
+# Prompt input logic
+if is_mobile:
+    # For mobile devices, place prompt input in the main content area
+    st.markdown("### 💬 Submit a Prompt")
+    user_prompt = st.text_input(
+        "Enter a user prompt:",
+        placeholder="e.g., Is our sentiment model GDPR compliant?",
+        key="mobile_prompt"
+    )
+else:
+    # For larger screens, keep prompt input in the sidebar
+    st.sidebar.markdown("### 🔍 Prompt-to-Ontology Mapping")
+    user_prompt = st.sidebar.text_input(
+        "Enter a user prompt:",
+        placeholder="e.g., Is our sentiment model GDPR compliant?",
+        key="sidebar_prompt"
+    )
+
+# Sidebar: Prompt-to-Ontology Mapping (only for non-mobile)
+if not is_mobile and user_prompt:
+    mapped_concepts = []
     if "hipaa" in user_prompt.lower():
         mapped_concepts = ["Compliance", "HIPAA", "Risk Assessment"]
     elif "gdpr" in user_prompt.lower():
@@ -54,21 +52,24 @@ if user_prompt:
     elif "trust" in user_prompt.lower():
         mapped_concepts = ["Trust Scoring", "Model Output"]
 
-if mapped_concepts:
-    st.sidebar.markdown("**Mapped Ontology Concepts:**")
-    for concept in mapped_concepts:
-        st.sidebar.markdown(f"- {concept}")
+    if mapped_concepts:
+        st.sidebar.markdown("**Mapped Ontology Concepts:**")
+        for concept in mapped_concepts:
+            st.sidebar.markdown(f"- {concept}")
 
-# Sidebar: White Paper and GitHub Links
+# Sidebar: White Paper and GitHub Links (always in sidebar)
 st.sidebar.markdown("---")
 st.sidebar.markdown("[📄 View Public White Paper](https://github.com/MMM777-ai/ontoguard/blob/main/assets/Ontology-Enhanced%20AI%20-%20Public%20White%20Paper.pdf)")
 st.sidebar.markdown("[🌐 GitHub Repository](https://github.com/MMM777-ai/web-ontology-demo)")
 
-# Prompt input (main column)
-st.markdown("""
-### 💬 Submit a Prompt
-_Type a question or statement your LLM might generate. This demo simulates evaluation for reliability, compliance, and reasoning beneath models like GPT-4, Claude, or Gemini._
-""")
+# Main content: Prompt input description (only for non-mobile)
+if not is_mobile:
+    st.markdown("""
+    ### 💬 Submit a Prompt
+    _Type a question or statement your LLM might generate. This demo simulates evaluation for reliability, compliance, and reasoning beneath models like GPT-4, Claude, or Gemini._
+    """)
+
+# Governance analysis and graph rendering
 if user_prompt:
     # Simulated dynamic reliability score (fake, IP-safe)
     keywords = ["compliant", "data", "model"]
@@ -125,7 +126,8 @@ if user_prompt:
 
     pos = nx.spring_layout(G, seed=42)
     edge_labels = nx.get_edge_attributes(G, 'label')
-    fig, ax = plt.subplots(figsize=(12, 8))
+    # Adjust graph size for mobile
+    fig, ax = plt.subplots(figsize=(8, 6) if is_mobile else (12, 8))
     nx.draw(G, pos, with_labels=True, node_color=node_colors, node_size=3000, font_size=12, arrows=True, edge_color='gray', ax=ax)
     nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=10)
     plt.title("Symbolic Reasoning Preview")
